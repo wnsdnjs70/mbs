@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+	<insert id="insert" parameterType="BoardDto">
+		INSERT INTO
+				T_BOARD(
+					NICK_NAME,
+					BOARD_TITLE,
+					CATEGORY_L,
+				    CATEGORY_S,
+				    PEOPLE_QTY,
+				    MEET_DATE,
+					DATE_NEGO,
+				    MEET_TIME,
+					TIME_NEGO,
+					ON_OF,
+					PLACE_ADD,
+					DETAIL_ADD,
+					PLACE_NEGO,
+				    URL,
+					BOARD_CONTENT,
+					REPLY,
+    				VIEWS,
+    				INTEREST,
+				    UPLOAD_DATE 
+				)
+		VALUES(
+				#{nickName },
+				#{boardTitle },
+				#{categoryL },
+				#{categoryS },
+				#{peopleQty },
+				#{meetDate },
+				#{dateNego },
+				#{meetTime },
+				#{timeNego },
+				#{onOf },
+				#{placeAdd },
+				#{detailAdd },
+				#{placeNego },
+				#{url },
+				#{boardContent },	
+				#{reply},
+				#{views},
+				#{interest},
+				NOW()
+		)
+	</insert>
+
+	<select id="selectAll" resultType="BoardDto">
+		SELECT
+				BOARD_NUMBER,
+				CATEGORY_L,
+		        CATEGORY_S,
+		        PEOPLE_QTY,
+		        BOARD_TITLE,
+		        MEET_DATE,
+		        MEET_TIME,
+		        ON_OF,
+		        PLACE_ADD,
+		        REPLY,
+		        VIEWS,
+		        INTEREST
+		FROM	
+				T_BOARD
+	</select>
+	
+	<resultMap type="hashmap" id="boardInfo">
+		<result column="NICK_NAME" property="nickName"/>
+		<result column="MEMBER_GENDER" property="memberGender"/>
+		<result column="MEMBER_BIRTH_Y" property="memberBirthY"/>
+		<result column="INT_CITY1" property="intCity1"/>
+		<result column="INT_GU1" property="intGu1"/>
+		<result column="INT_CITY2" property="intCity2"/>
+		<result column="INT_GU2" property="intGu2"/>
+		<result column="MEMBER_INSTAGRAM" property="memberInstagram"/>
+		<result column="MEMBER_FACEBOOK" property="memberFacebook"/>
+		<result column="BOARD_NUMBER" property="boardNumber"/>
+		<result column="BOARD_TITLE" property="boardTitle"/>
+		<result column="CATEGORY_L" property="categoryL"/>
+		<result column="CATEGORY_S" property="categoryS"/>
+		<result column="PEOPLE_QTY" property="peoplQty"/>
+		<result column="MEET_DATE" property="meetDate"/>
+		<result column="DATE_NEGO" property="dateNego"/>
+		<result column="MEET_TIME" property="meetTime"/>
+		<result column="TIME_NEGO" property="timeNego"/>
+		<result column="ON_OF" property="onOf"/>
+		<result column="PLACE_ADD" property="placeAdd"/>
+		<result column="DETAIL_ADD" property="detailAdd"/>
+		<result column="URL" property="url"/>
+		<result column="BOARD_CONTENT" property="boardContent"/>
+		<result column="REPLY" property="reply"/>
+		<result column="VIEWS" property="views"/>
+		<result column="INTEREST" property="interest"/>
+		<result column="UPLOAD_DATE" property="uploadDate"/>
+	</resultMap>
+	
+	<select id="selectBoardInfo" parameterType="int" resultMap="boardInfo">
+		SELECT
+				M.NICK_NAME				AS NICK_NAME,
+		        M.MEMBER_GENDER			AS MEMBER_GENDER,
+		        M.MEMBER_BIRTH_Y		AS MEMBER_BIRTH_Y,
+		        M.INT_CITY1				AS INT_CITY1,
+		        M.INT_GU1				AS INT_GU1,
+		        M.INT_CITY2				AS INT_CITY2,
+		        M.INT_GU2				AS INT_GU2,
+		        M.MEMBER_INSTAGRAM		AS MEMBER_INSTAGRAM,
+		        M.MEMBER_FACEBOOK		AS MEMBER_FACEBOOK,
+		        B.BOARD_NUMBER			AS BOARD_NUMBER,
+				B.BOARD_TITLE			AS BOARD_TITLE,
+				B.CATEGORY_L			AS CATEGORY_L,
+		        B.CATEGORY_S			AS CATEGORY_S,
+		        B.PEOPLE_QTY			AS PEOPLE_QTY,
+		        B.MEET_DATE				AS MEET_DATE,
+		        B.DATE_NEGO				AS DATE_NEGO,
+		        B.MEET_TIME				AS MEET_TIME,
+		        B.TIME_NEGO				AS TIME_NEGO,
+		        B.ON_OF					AS ON_OF,
+		        B.PLACE_ADD				AS PLACE_ADD,
+		        B.DETAIL_ADD			AS DETAIL_ADD,
+		        B.URL					AS URL,
+		        B.BOARD_CONTENT			AS BOARD_CONTENT,
+		        B.REPLY					AS REPLY,
+		        B.VIEWS					AS VIEWS,
+		        B.INTEREST				AS INTEREST,
+		        B.UPLOAD_DATE			AS UPLOAD_DATE
+		FROM
+				  T_MEMBER M
+		        INNER JOIN T_BOARD B
+						ON M.NICK_NAME = B.NICK_NAME
+		WHERE
+				B.BOARD_NUMBER = #{boardNumber}
+	</select>
+	
+	<update id="updateViews" parameterType="int">
+		UPDATE
+				T_BOARD
+		SET
+				VIEWS = VIEWS+1
+		WHERE
+				BOARD_NUMBER = #{boardNumber}
+	</update>
+	
+	<select id="selectInterest" parameterType="hashmap" resultType="int">
+		SELECT
+				INTEREST
+		FROM
+				T_BOARD
+		WHERE
+				BOARD_NUMBER = #{boardNumber}
+	</select>
+	
+	<update id="updateInterest" parameterType="hashmap">
+		UPDATE
+				T_BOARD
+		<set>
+				<choose>
+					<when test="operator == 'plus'">
+						INTEREST = INTEREST + 1
+					</when>
+					<otherwise>
+						<if test="interest > 0">
+							INTEREST = INTEREST - 1						
+						</if>
+					</otherwise>
+				</choose>
+		</set>
+		WHERE
+				BOARD_NUMBER = #{boardNumber}
+	</update>
+	
+</mapper>

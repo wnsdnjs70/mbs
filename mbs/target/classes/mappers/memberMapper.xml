@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+
+	<insert id="join" parameterType="MemberDto">
+		INSERT INTO
+				T_MEMBER
+		VALUES(
+				#{memberId },
+				#{nickName },
+				#{memberPw },
+				#{memberName },
+				#{memberGender },
+				#{memberBirthY },
+				#{memberBirthM },
+				#{memberBirthD },
+				#{hp1 },
+				#{hp2 },
+				#{hp3 },
+				#{smsYn },
+				#{email1 },
+				#{email2 },
+				#{emailYn },
+				#{intCity1 },
+				#{intGu1 },
+				#{intCity2 },
+				#{intGu2 },
+				"https://www.instagram.com",
+				"https://www.facebook.com",
+				#{allAgree },
+				#{serviceAgree },
+				#{infoAgree },
+				#{expirAgree },
+				#{promAgree },
+				"#",		
+				NOW()
+		)
+	</insert>
+
+	<select id="selectOne" parameterType="hashMap" resultType="MemberDto">
+		SELECT
+				*
+		FROM
+				T_MEMBER
+		WHERE
+				MEMBER_ID = #{memberId }
+	</select>
+
+	<select id="dupleCheck" parameterType="String" resultType="MemberDto">
+		SELECT
+				*
+		FROM
+				T_MEMBER
+		WHERE
+				MEMBER_ID = #{checkItem }
+	</select>
+	
+	<select id="selectInterestList" parameterType="hashmap" resultType="String">
+		SELECT
+				INTEREST_LIST
+		FROM
+				T_MEMBER
+		WHERE
+				NICK_NAME = #{loginMember}
+	</select>
+	
+	<update id="updateInterestList" parameterType="hashmap">
+		UPDATE
+				T_MEMBER
+		<set>
+				<choose>
+					<when test='"plus".equalsIgnoreCase(operator)'>
+						INTEREST_LIST = CONCAT(INTEREST_LIST, #{query})									
+					</when>
+					<otherwise>
+						INTEREST_LIST = #{query}
+					</otherwise>
+				</choose>
+		</set>
+		WHERE
+				NICK_NAME = #{loginMember}	
+	</update>
+
+</mapper>
